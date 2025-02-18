@@ -15,14 +15,16 @@ public partial class PropertyTree
         DataContext = this;
     }
 
-    internal ObservableCollection<PropertyViewModel> RootProperties
+    internal ObservableCollection<PropertyViewModel>? RootProperties
     {
         get => (ObservableCollection<PropertyViewModel>)GetValue(RootPropertiesProperty);
-        set => SetValue(RootPropertiesProperty, value);
+        set => SetValue(RootPropertiesProperty, value ?? DependencyProperty.UnsetValue);
     }
 
-    public object RootObject
+    public object? RootObject
     {
-        set => RootProperties = [new PropertyViewModel(value.GetType().Name, value, type: value.GetType())];
+        set => RootProperties = value != null
+            ? [new PropertyViewModel(value.GetType().Name, value, type: value.GetType())]
+            : null;
     }
 }
