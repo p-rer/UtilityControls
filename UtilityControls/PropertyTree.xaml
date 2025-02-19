@@ -11,11 +11,13 @@
         <HierarchicalDataTemplate DataType="{x:Type propertyTree:PropertyViewModel}" ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock x:Name="tbName" Text="{Binding PropertyName}" Foreground="Blue" />
-                <TextBlock x:Name="tbType" Foreground="Purple" Margin="4,0,0,0">
+                <TextBlock x:Name="tbType" Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                           Margin="4,0,0,0">
                     <Run Text=":" />
                     <Run Text="{Binding DisplayType}" />
                 </TextBlock>
-                <TextBlock x:Name="tbEqual" Text=" = " Foreground="Black" Margin="4,0,0,0" />
+                <TextBlock x:Name="tbEqual" Text=" = "
+                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Margin="4,0,0,0" />
                 <TextBlock x:Name="tbValue" Text="{Binding PropertyValue}" Foreground="Green" Margin="4,0,0,0" />
             </StackPanel>
             <HierarchicalDataTemplate.Triggers>

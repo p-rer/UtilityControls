@@ -24,7 +24,7 @@ public partial class PropertyTree
     public object? RootObject
     {
         set => RootProperties = value != null
-            ? [new PropertyViewModel(value.GetType().Name, value, type: value.GetType())]
+            ? [new PropertyViewModel(value.ToString() ?? string.Empty, value, type: value.GetType())]
             : null;
     }
 }
