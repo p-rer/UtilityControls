@@ -6,19 +6,23 @@
           xmlns:propertyTree="clr-namespace:UtilityControls"
           mc:Ignorable="d"
           d:DesignHeight="300" d:DesignWidth="300"
-          ItemsSource="{Binding RootProperties}">
+          ItemsSource="{Binding RootProperties}"
+          VirtualizingStackPanel.IsVirtualizing="True"
+          VirtualizingStackPanel.VirtualizationMode="Recycling"
+          BorderThickness="0">
     <TreeView.Resources>
         <HierarchicalDataTemplate DataType="{x:Type propertyTree:PropertyViewModel}" ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal">
-                <TextBlock x:Name="tbName" Text="{Binding PropertyName}" Foreground="Blue" />
-                <TextBlock x:Name="tbType" Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
-                           Margin="4,0,0,0">
-                    <Run Text=":" />
-                    <Run Text="{Binding DisplayType}" />
-                </TextBlock>
-                <TextBlock x:Name="tbEqual" Text=" = "
-                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Margin="4,0,0,0" />
-                <TextBlock x:Name="tbValue" Text="{Binding PropertyValue}" Foreground="Green" Margin="4,0,0,0" />
+                <TextBox x:Name="tbName" Text="{Binding PropertyName}" Foreground="Blue"
+                         BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                <TextBox x:Name="tbType" Text="{Binding DisplayType, StringFormat=': {0}'}"
+                         Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                         Margin="4,0,0,0" BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                <TextBox x:Name="tbEqual" Text=" = "
+                         Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                         Margin="4,0,0,0" BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                <TextBox x:Name="tbValue" Text="{Binding PropertyValue}" Foreground="Green"
+                         Margin="4,0,0,0" BorderThickness="0" Background="Transparent" IsReadOnly="True" />
             </StackPanel>
             <HierarchicalDataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsLoading}" Value="True">
@@ -32,6 +36,9 @@
     <TreeView.ItemContainerStyle>
         <Style TargetType="TreeViewItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
     </TreeView.ItemContainerStyle>
 </TreeView>

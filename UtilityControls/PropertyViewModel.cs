@@ -5,21 +5,47 @@ using System.Windows;
 
 namespace UtilityControls;
 
+public enum MemberIconType
+{
+    PropertyPublic,
+    PropertyNonPublic,
+    FieldPublic,
+    FieldNonPublic,
+    None
+}
+
 public class PropertyViewModel : INotifyPropertyChanged
 {
     private readonly object? _object;
 
     private bool _isExpanded;
 
-    public PropertyViewModel(string name, object? obj, PropertyInfo? propInfo = null, Type? type = null)
+    public PropertyViewModel(string name, object? obj, MemberInfo? memberInfo = null, Type? type = null)
     {
         _object = obj;
-        PropertyName = name;
         PropertyValue = obj?.ToString() ?? "null";
-        if (propInfo != null)
-            DisplayType = propInfo.PropertyType.Name;
-        else
-            DisplayType = type == null ? "" : type.Name;
+        PropertyName = name;
+        switch (memberInfo)
+        {
+            case PropertyInfo pi:
+                DisplayType = pi.PropertyType.Name;
+
+                IconType = (pi.GetMethod != null && pi.GetMethod.IsPublic) ||
+                           (pi.SetMethod != null && pi.SetMethod.IsPublic)
+                    ? MemberIconType.PropertyPublic
+                    : MemberIconType.PropertyNonPublic;
+                break;
+            case FieldInfo fi:
+                DisplayType = fi.FieldType.Name;
+                IconType = fi.IsPublic
+                    ? MemberIconType.FieldPublic
+                    : MemberIconType.FieldNonPublic;
+                break;
+            default:
+                DisplayType = type?.Name ?? obj?.GetType().Name ?? "Unknown";
+                IconType = MemberIconType.None;
+                break;
+        }
 
         IsLoading = false;
         CanExpand = HasExpandableProperties(obj);
@@ -29,7 +55,6 @@ public class PropertyViewModel : INotifyPropertyChanged
     public string PropertyName { get; set; }
     public string PropertyValue { get; set; }
     public string DisplayType { get; set; }
-
     public bool IsLoading { get; set; }
 
     public ObservableCollection<PropertyViewModel?> Children { get; set; } = [];
@@ -49,6 +74,8 @@ public class PropertyViewModel : INotifyPropertyChanged
     public bool ChildrenLoaded { get; private set; }
 
     public bool CanExpand { get; }
+
+    public MemberIconType IconType { get; set; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -96,28 +123,54 @@ public class PropertyViewModel : INotifyPropertyChanged
         var childItems = await Task.Run(() =>
         {
             var items = new List<PropertyViewModel>();
-            if (_object != null)
+            var propertyItems = new List<PropertyViewModel>();
+            var fieldItems = new List<PropertyViewModel>();
+            if (_object == null) return items;
+            var type = _object.GetType();
+            var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(p => p.GetMethod is { IsPrivate: false } || p.SetMethod is { IsPrivate: false })
+                .ToList();
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public)
+                .ToList();
+            foreach (var prop in props)
             {
-                var type = _object.GetType();
-                var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(p => p.GetMethod != null && !p.GetMethod.IsPrivate)
-                    .ToList();
-                foreach (var prop in props)
+                object? value = null;
+                try
                 {
-                    object? value = null;
-                    try
-                    {
-                        value = prop.GetValue(_object);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    var childVm = new PropertyViewModel(prop.Name, value, prop);
-                    items.Add(childVm);
+                    value = prop.GetValue(_object);
                 }
+                catch
+                {
+                    // ignored
+                }
+
+                var childVm = new PropertyViewModel(prop.Name, value, prop);
+                propertyItems.Add(childVm);
             }
+
+            propertyItems.Sort((a, b) =>
+                string.Compare(a.PropertyName, b.PropertyName, StringComparison.OrdinalIgnoreCase));
+
+            foreach (var field in fields)
+            {
+                object? value = null;
+                try
+                {
+                    value = field.GetValue(_object);
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                var childVm = new PropertyViewModel(field.Name, value, field);
+                fieldItems.Add(childVm);
+            }
+
+            fieldItems.Sort(
+                (a, b) => string.Compare(a.PropertyName, b.PropertyName, StringComparison.OrdinalIgnoreCase));
+            items.AddRange(propertyItems);
+            items.AddRange(fieldItems);
 
             return items;
         });
