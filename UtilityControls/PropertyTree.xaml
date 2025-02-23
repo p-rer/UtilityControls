@@ -14,15 +14,19 @@
         <HierarchicalDataTemplate DataType="{x:Type propertyTree:PropertyViewModel}" ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal">
                 <TextBox x:Name="tbName" Text="{Binding PropertyName}" Foreground="Blue"
-                         BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                         BorderThickness="0" Background="Transparent" IsReadOnly="True"
+                         VerticalAlignment="Center" />
                 <TextBox x:Name="tbType" Text="{Binding DisplayType, StringFormat=': {0}'}"
                          Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
-                         Margin="4,0,0,0" BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                         Margin="4,0,0,0" BorderThickness="0" Background="Transparent" IsReadOnly="True"
+                         VerticalAlignment="Center" />
                 <TextBox x:Name="tbEqual" Text=" = "
                          Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
-                         Margin="4,0,0,0" BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                         Margin="4,0,0,0" BorderThickness="0" Background="Transparent" IsReadOnly="True"
+                         VerticalAlignment="Center" />
                 <TextBox x:Name="tbValue" Text="{Binding PropertyValue}" Foreground="Green"
-                         Margin="4,0,0,0" BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                         Margin="4,0,0,0" BorderThickness="0" Background="Transparent" IsReadOnly="True"
+                         VerticalAlignment="Center" />
             </StackPanel>
             <HierarchicalDataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsLoading}" Value="True">
