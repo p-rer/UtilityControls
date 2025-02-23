@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
@@ -180,6 +181,22 @@ public class PropertyViewModel : INotifyPropertyChanged
                 (a, b) => string.Compare(a.PropertyName, b.PropertyName, StringComparison.OrdinalIgnoreCase));
             items.AddRange(propertyItems);
             items.AddRange(fieldItems);
+
+            if (_object is IEnumerable enumerable and not string)
+            {
+                var indexerNode = new PropertyViewModel("this[]", _object);
+                indexerNode.Children.Clear();
+                var index = 0;
+                foreach (var element in enumerable)
+                {
+                    var elementNode = new PropertyViewModel("[" + index + "]", element);
+                    indexerNode.Children.Add(elementNode);
+                    index++;
+                }
+
+                indexerNode.ChildrenLoaded = true;
+                items.Add(indexerNode);
+            }
 
             return items;
         });
