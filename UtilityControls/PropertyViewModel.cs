@@ -120,7 +120,7 @@ public class PropertyViewModel : INotifyPropertyChanged
 
         await Task.Yield();
 
-        var childItems = await Task.Run(() =>
+        var childItems = await Task.Run(async () =>
         {
             var items = new List<PropertyViewModel>();
             var propertyItems = new List<PropertyViewModel>();
@@ -130,7 +130,8 @@ public class PropertyViewModel : INotifyPropertyChanged
             var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .Where(p => p.GetMethod is { IsPrivate: false } || p.SetMethod is { IsPrivate: false })
                 .ToList();
-            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public)
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(f => !f.IsPrivate)
                 .ToList();
             foreach (var prop in props)
             {
@@ -144,8 +145,12 @@ public class PropertyViewModel : INotifyPropertyChanged
                     // ignored
                 }
 
-                var childVm = new PropertyViewModel(prop.Name, value, prop);
-                propertyItems.Add(childVm);
+                PropertyViewModel childVm;
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    childVm = new PropertyViewModel(prop.Name, value, prop);
+                    propertyItems.Add(childVm);
+                });
             }
 
             propertyItems.Sort((a, b) =>
@@ -163,8 +168,12 @@ public class PropertyViewModel : INotifyPropertyChanged
                     // ignored
                 }
 
-                var childVm = new PropertyViewModel(field.Name, value, field);
-                fieldItems.Add(childVm);
+                PropertyViewModel childVm;
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    childVm = new PropertyViewModel(field.Name, value, field);
+                    fieldItems.Add(childVm);
+                });
             }
 
             fieldItems.Sort(
