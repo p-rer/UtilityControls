@@ -4,9 +4,34 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:propertyTree="clr-namespace:UtilityControls;assembly=UtilityControls"
+        xmlns:test="clr-namespace:UtilityControls.Test"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <test:ColorToHexConverter x:Key="ColorToHexConverter" />
+    </Window.Resources>
     <Grid>
-        <propertyTree:PropertyTree x:Name="PropertyTree" />
+        <StackPanel>
+            <propertyTree:ColorPicker x:Name="Picker"
+                                      SelectedColor="{Binding SelectedColor, Mode=TwoWay}" />
+            <StackPanel Orientation="Horizontal" Margin="0,5" VerticalAlignment="Center">
+                <TextBlock Text="R:" Width="30" VerticalAlignment="Center" />
+                <Slider x:Name="SliderR" Minimum="0" Maximum="255" Width="200" ValueChanged="Slider_ValueChanged" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5" VerticalAlignment="Center">
+                <TextBlock Text="G:" Width="30" VerticalAlignment="Center" />
+                <Slider x:Name="SliderG" Minimum="0" Maximum="255" Width="200" ValueChanged="Slider_ValueChanged" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5" VerticalAlignment="Center">
+                <TextBlock Text="B:" Width="30" VerticalAlignment="Center" />
+                <Slider x:Name="SliderB" Minimum="0" Maximum="255" Width="200" ValueChanged="Slider_ValueChanged" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5" VerticalAlignment="Center">
+                <TextBlock Text="A:" Width="30" VerticalAlignment="Center" />
+                <Slider x:Name="SliderA" Minimum="0" Maximum="255" Width="200" ValueChanged="Slider_ValueChanged" />
+            </StackPanel>
+            <TextBlock Text="{Binding SelectedColor, Converter={StaticResource ColorToHexConverter}}"
+                       FontSize="16" HorizontalAlignment="Center" Margin="10" />
+        </StackPanel>
     </Grid>
 </Window>

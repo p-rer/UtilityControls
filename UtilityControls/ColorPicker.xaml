@@ -1,0 +1,20 @@
+<UserControl x:Class="UtilityControls.ColorPicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="Auto" Height="Auto" Padding="15">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="250" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Canvas x:Name="ColorWheelCanvas" Width="250" Height="250"
+                MouseDown="ColorWheelCanvas_MouseDown"
+                MouseMove="ColorWheelCanvas_MouseMove"
+                MouseUp="ColorWheelCanvas_MouseUp">
+            <Ellipse x:Name="HueRing" Width="250" Height="250" StrokeThickness="20" Stroke="Gray" />
+            <Polygon x:Name="SvTriangle" Stroke="Black" StrokeThickness="1" Fill="Transparent" />
+            <Ellipse x:Name="SelectorIndicator" Width="10" Height="10" Fill="Black" Visibility="Collapsed" />
+            <Line x:Name="HueIndicator" Stroke="Black" StrokeThickness="3" />
+        </Canvas>
+    </Grid>
+</UserControl>
