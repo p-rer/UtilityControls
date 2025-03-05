@@ -366,6 +366,8 @@ public partial class ColorPicker
             ColorWheelCanvas.CaptureMouse();
             UpdateSvFromPoint(pos);
         }
+
+        e.Handled = true;
     }
 
     private void ColorWheelCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -377,6 +379,7 @@ public partial class ColorPicker
             UpdateHueFromPoint(pos);
         else if (_draggingInTriangle)
             UpdateSvFromPoint(pos);
+        e.Handled = true;
     }
 
     private void ColorWheelCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -385,6 +388,7 @@ public partial class ColorPicker
         _draggingInRing = false;
         _draggingInTriangle = false;
         ColorWheelCanvas.ReleaseMouseCapture();
+        e.Handled = true;
     }
 
     #endregion
